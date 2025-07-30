@@ -1,0 +1,9 @@
+{
+  "name": "@veloren-translate/rss-digester",
+  "private": true,
+  "dependencies": {
+    "@google-cloud/functions-framework": "catalog:",
+    "@google-cloud/storage": "catalog:",
+    "rss-parser": "^3.13.0"
+  }
+}

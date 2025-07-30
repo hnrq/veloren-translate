@@ -1,0 +1,38 @@
+# Gitignore for Nx Monorepo with pnpm
+
+# Node.js and pnpm
+node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store/ # pnpm's global content-addressable store (usually outside repo, but good to include if it somehow ends up inside)
+pnpm-lock.yaml # Usually committed, but if you prefer not to, uncomment this line
+.pnpm-debug.log
+
+# TypeScript compilation outputs
+dist/
+out-tsc/
+*.tsbuildinfo
+
+# Nx specific
+.nx/
+tmp/
+.nx-cache/
+
+# Environment variables
+.env.keys
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Cloud Function specific (if any local build artifacts are created outside dist/)
+# For example, if you have a specific build output directory for cloud functions
+# cloudfunctions_build/

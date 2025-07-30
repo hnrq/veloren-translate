@@ -1,0 +1,41 @@
+{
+  "name": "@veloren-translate/html-to-markdown",
+  "sourceRoot": "apps/html-to-markdown/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "apps/html-to-markdown/dist",
+        "tsConfig": "apps/html-to-markdown/tsconfig.json",
+        "main": "apps/html-to-markdown/src/index.ts",
+        "assets": ["apps/html-to-markdown/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "externalDependencies": "all"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "html-to-markdown:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "html-to-markdown:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": []
+}

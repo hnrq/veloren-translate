@@ -1,0 +1,78 @@
+# .github/workflows/deploy.yml
+
+name: Deploy Cloud Functions
+
+on:
+  push:
+    branches:
+      - main # Trigger on pushes to the main branch
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions UI
+
+env:
+  PROJECT_ID: your-gcp-project-id # Replace with your Google Cloud Project ID
+  REGION: us-central1 # Choose your desired Google Cloud region
+  RAW_HTML_BUCKET: your-raw-html-bucket-name
+  TRANSLATED_HTML_BUCKET: your-translated-html-bucket-name
+  MARKDOWN_BUCKET: your-markdown-bucket-name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write" # Required for Workload Identity Federation
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18" # Ensure this matches your Cloud Function runtime
+
+      - name: Authenticate to Google Cloud
+        id: "auth"
+        uses: "google-github-actions/auth@v2"
+        with:
+          workload_identity_provider: "projects/${{ env.PROJECT_ID }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider" # Replace with your WIF provider
+          service_account: "github-actions-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com" # Replace with your service account email
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy RSS Digester Cloud Function
+        run: |
+          cd rss-digester
+          npm install # Install dependencies for the function
+          gcloud functions deploy digestRssFeed \
+            --runtime nodejs \
+            --trigger-http \
+            --entry-point digestRssFeed \
+            --source . \
+            --region ${{ env.REGION }} \
+            --project ${{ env.PROJECT_ID }} \
+            --memory 256MB \
+            --timeout 300s \
+            --set-env-vars RAW_HTML_BUCKET_NAME=${{ env.RAW_HTML_BUCKET }}
+          cd .. # Go back to the root directory
+
+      - name: Deploy HTML to Markdown Converter Cloud Function
+        run: |
+          cd html-to-markdown
+          npm install # Install dependencies for the function
+          gcloud functions deploy htmlToMarkdown \
+            --runtime nodejs \
+            --trigger-bucket ${{ env.TRANSLATED_HTML_BUCKET }} \
+            --entry-point htmlToMarkdown \
+            --source . \
+            --region ${{ env.REGION }} \
+            --project ${{ env.PROJECT_ID }} \
+            --memory 256MB \
+            --timeout 300s \
+            --set-env-vars TRANSLATED_HTML_BUCKET_NAME=${{ env.TRANSLATED_HTML_BUCKET }},MARKDOWN_BUCKET_NAME=${{ env.MARKDOWN_BUCKET }} \
+            --retry
+          cd .. # Go back to the root directory
+
+      - name: Display Deployment Success
+        run: echo "Cloud Functions deployment workflow completed successfully!"

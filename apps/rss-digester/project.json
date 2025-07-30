@@ -1,0 +1,41 @@
+{
+  "name": "@veloren-translate/rss-digester",
+  "sourceRoot": "apps/rss-digester/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "apps/rss-digester/dist",
+        "tsConfig": "apps/rss-digester/tsconfig.json",
+        "main": "apps/rss-digester/src/index.ts",
+        "assets": ["apps/rss-digester/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "externalDependencies": "all"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "rss-digester:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "rss-digester:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": []
+}
