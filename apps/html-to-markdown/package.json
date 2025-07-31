@@ -1,11 +1,12 @@
 {
   "name": "@veloren-translate/html-to-markdown",
   "description": "Google Cloud Function to digest HTML and save it to GCS.",
+  "type": "module",
   "dependencies": {
     "turndown": "^7.1.3",
     "js-yaml": "^4.1.0",
-    "@google-cloud/functions-framework": "catalog:",
-    "@google-cloud/storage": "catalog:"
+    "@google-cloud/functions-framework": "^4.0.0",
+    "@google-cloud/storage": "^7.16.0"
   },
   "devDependencies": {
     "@types/turndown": "^5.0.1",

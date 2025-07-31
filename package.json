@@ -7,13 +7,13 @@
   "private": true,
   "scripts": {
     "nx": "nx",
-    "build:rss-digester": "nx build rss-digester",
-    "deploy:rss-digester": "gcloud functions deploy digestRssFeed --runtime nodejs --trigger-http --entry-point main --source apps/rss-digester/dist --region us-central1 --set-env-vars RAW_HTML_BUCKET_NAME=$RAW_HTML_BUCKET,RSS_FEED_URL=$RSS_FEED_URL",
-    "build:html-to-markdown": "nx build html-to-markdown",
-    "deploy:html-to-markdown": "gcloud functions deploy htmlToMarkdown --runtime nodejs --trigger-bucket $TRANSLATED_HTML_BUCKET --entry-point main --source apps/html-to-markdown/dist --region us-central1 --set-env-vars TRANSLATED_HTML_BUCKET_NAME=$TRANSLATED_HTML_BUCKET,MARKDOWN_BUCKET_NAME=$MARKDOWN_BUCKET --retry",
-    "build": "nx run-many --target=build --all",
-    "test": "nx run-many --target=test --all",
-    "lint": "nx lint"
+    "build:rss-digester": "dotenvx run -- nx build rss-digester",
+    "deploy:rss-digester": "dotenvx run -- sh -c 'gcloud functions deploy digestRssFeed --gen2 --runtime nodejs20 --trigger-http --entry-point main --source apps/rss-digester/dist --region us-central1 --set-env-vars RAW_HTML_BUCKET_NAME=$RAW_HTML_BUCKET_NAME,RSS_FEED_URL=$RSS_FEED_URL'",
+    "build:html-to-markdown": "dotenvx run -- nx build html-to-markdown",
+    "deploy:html-to-markdown": "dotenvx run -- sh -c 'gcloud functions deploy htmlToMarkdown --gen2 --runtime nodejs20 --trigger-event-filters=\"type=google.cloud.storage.object.v1.finalized\" --trigger-event-filters=\"bucket=$TRANSLATED_HTML_BUCKET_NAME\" --entry-point main --source apps/html-to-markdown/dist --region us-central1 --set-env-vars TRANSLATED_HTML_BUCKET_NAME=$TRANSLATED_HTML_BUCKET_NAME,MARKDOWN_BUCKET_NAME=$MARKDOWN_BUCKET_NAME'",
+    "build": "dotenvx run -- nx run-many --target=build --all",
+    "test": "dotenvx run -- nx run-many --target=test --all",
+    "lint": "dotenvx run -- nx lint"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^1.48.4",

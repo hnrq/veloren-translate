@@ -64,11 +64,17 @@ export const main = async (event: CloudEvent<GCSObjectData>): Promise<void> => {
     const pubDateMatch = htmlString.match(/data-pubdate="([^"]*)"/);
     const urlMatch = htmlString.match(/data-url="([^"]*)"/);
 
-    const title: string = titleMatch ? decodeURIComponent(titleMatch[1]) : 'Untitled Post';
-    const pubDate: string = pubDateMatch ? pubDateMatch[1] : new Date().toISOString();
+    const title: string = titleMatch
+      ? decodeURIComponent(titleMatch[1])
+      : 'Untitled Post';
+    const pubDate: string = pubDateMatch
+      ? pubDateMatch[1]
+      : new Date().toISOString();
     const url: string = urlMatch ? urlMatch[1] : 'No URL';
 
-    console.log(`Extracted metadata: Title="${title}", PubDate="${pubDate}", URL="${url}"`);
+    console.log(
+      `Extracted metadata: Title="${title}", PubDate="${pubDate}", URL="${url}"`,
+    );
 
     const cleanHtmlString: string = htmlString.replace(
       /<div style="display:none;"[^>]*>[\s\S]*?<\/div>/,
@@ -96,7 +102,9 @@ export const main = async (event: CloudEvent<GCSObjectData>): Promise<void> => {
     await markdownFile.save(finalMarkdown, {
       contentType: 'text/markdown',
     });
-    console.log(`Saved Markdown file: ${markdownFilePath} to ${MARKDOWN_BUCKET_NAME}`);
+    console.log(
+      `Saved Markdown file: ${markdownFilePath} to ${MARKDOWN_BUCKET_NAME}`,
+    );
   } catch (error: any) {
     console.error(`Error converting HTML to Markdown for ${filePath}:`, error);
   }

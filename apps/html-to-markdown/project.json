@@ -9,7 +9,7 @@
       "options": {
         "outputPath": "apps/html-to-markdown/dist",
         "tsConfig": "apps/html-to-markdown/tsconfig.json",
-        "main": "apps/html-to-markdown/src/index.ts",
+        "main": "apps/html-to-markdown/src/index.js",
         "assets": ["apps/html-to-markdown/src/assets"]
       },
       "configurations": {

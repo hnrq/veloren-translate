@@ -1,6 +1,2 @@
 packages:
-  - "apps/*"
-
-catalog:
-  "@google-cloud/functions-framework": "^4.0.0"
-  "@google-cloud/storage": "^7.16.0"
+  - 'apps/*'

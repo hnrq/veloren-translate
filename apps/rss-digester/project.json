@@ -9,7 +9,7 @@
       "options": {
         "outputPath": "apps/rss-digester/dist",
         "tsConfig": "apps/rss-digester/tsconfig.json",
-        "main": "apps/rss-digester/src/index.ts",
+        "main": "apps/rss-digester/src/index.js",
         "assets": ["apps/rss-digester/src/assets"]
       },
       "configurations": {
