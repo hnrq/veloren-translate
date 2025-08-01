@@ -1,0 +1,41 @@
+{
+  "name": "@veloren-translate/batch-translator",
+  "sourceRoot": "apps/batch-translator/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "apps/batch-translator/dist",
+        "tsConfig": "apps/batch-translator/tsconfig.json",
+        "main": "apps/batch-translator/src/index.js",
+        "assets": ["apps/batch-translator/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "externalDependencies": "all"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "batch-translator:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "batch-translator:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": []
+}

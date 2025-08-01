@@ -49,6 +49,9 @@ jobs:
       - name: Deploy RSS Digester Cloud Function
         run: pnpm deploy:rss-digester
 
+      - name: Deploy Batch Translator Cloud Function
+        run: pnpm deploy:batch-translator
+
       - name: Deploy HTML to Markdown Converter Cloud Function
         run: pnpm deploy:html-to-markdown
 

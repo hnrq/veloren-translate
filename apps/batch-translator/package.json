@@ -1,0 +1,8 @@
+{
+  "name": "@veloren-translate/batch-translator",
+  "type": "module",
+  "dependencies": {
+    "@google-cloud/translate": "^9.0.0"
+  },
+  "license": "MIT"
+}
