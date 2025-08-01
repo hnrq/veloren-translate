@@ -95,6 +95,10 @@ importers:
       '@google-cloud/translate':
         specifier: ^9.0.0
         version: 9.2.0
+    devDependencies:
+      '@google-cloud/functions-framework':
+        specifier: ^4.0.0
+        version: 4.0.0
 
   apps/html-to-markdown:
     dependencies:

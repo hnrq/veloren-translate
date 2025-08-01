@@ -4,5 +4,8 @@
   "dependencies": {
     "@google-cloud/translate": "^9.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@google-cloud/functions-framework": "^4.0.0"
+  }
 }

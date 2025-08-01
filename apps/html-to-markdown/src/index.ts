@@ -44,15 +44,25 @@ export const main = async (event: CloudEvent<GCSObjectData>): Promise<void> => {
     return;
   }
 
-  const languageMatch = filePath.match(/^(es|pt-br)\//);
-  if (!languageMatch) {
+  const fileMatch = filePath.match(
+    /(.*)_([a-z]{2,3}(?:-[a-zA-Z]{2,4})?)_translations\.html$/,
+  );
+
+  if (!fileMatch) {
     console.log(
-      `Skipping file ${filePath}: Does not match expected language prefix (es/ or pt-br/).`,
+      `Skipping file ${filePath}: Does not match expected format '<original_file_name>_[trg]_translations.html'`,
     );
     return;
   }
-  const language: string = languageMatch[1];
-  console.log(`Detected language: ${language}`);
+
+  const originalFileName = fileMatch[1].replace(
+    'veloren-html-raw_raw-html_',
+    '',
+  );
+  const language = fileMatch[2];
+  console.log(
+    `Detected language: ${language} for original file: ${originalFileName}`,
+  );
 
   try {
     const bucket = storage.bucket(bucketName);
@@ -94,8 +104,8 @@ export const main = async (event: CloudEvent<GCSObjectData>): Promise<void> => {
 
     const finalMarkdown: string = `---\n${yamlFrontmatter}---\n\n${markdownContent}`;
 
-    const markdownFileName: string = filePath.replace('.html', '.md');
-    const markdownFilePath: string = `markdown/${markdownFileName}`;
+    const markdownFileName = `${originalFileName}.md`;
+    const markdownFilePath = `${language}/${markdownFileName}`;
     const markdownBucket = storage.bucket(MARKDOWN_BUCKET_NAME);
     const markdownFile = markdownBucket.file(markdownFilePath);
 

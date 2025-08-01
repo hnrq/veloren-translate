@@ -26,7 +26,7 @@ describe('batchTranslate', () => {
     };
     batchTranslateTextSpy.mockResolvedValue([mockOperation]);
 
-    const data = { bucket: 'test-raw-bucket', name: 'test-file.html' };
+    const data = { bucket: 'test-raw-bucket', name: 'test-file.html' } as any;
     await batchTranslate(data);
 
     expect(batchTranslateTextSpy).toHaveBeenCalledWith({
@@ -54,7 +54,7 @@ describe('batchTranslate', () => {
     const error = new Error('test-error');
     batchTranslateTextSpy.mockRejectedValue(error);
 
-    const data = { bucket: 'test-raw-bucket', name: 'test-file.html' };
+    const data = { bucket: 'test-raw-bucket', name: 'test-file.html' } as any;
     await batchTranslate(data);
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(

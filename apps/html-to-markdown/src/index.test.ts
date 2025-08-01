@@ -25,7 +25,7 @@ describe('htmlToMarkdown', () => {
     mockCloudEvent = {
       data: {
         bucket: process.env.TRANSLATED_HTML_BUCKET_NAME,
-        name: 'es/test-post-123.html',
+        name: 'test-post-123_es_translations.html',
         contentType: 'text/html',
       },
 
@@ -35,7 +35,7 @@ describe('htmlToMarkdown', () => {
       specversion: '1.0',
       type: 'google.cloud.storage.object.v1.finalized',
       time: new Date().toISOString(),
-      subject: 'objects/es/test-post-123.html',
+      subject: 'objects/test-post-123_es_translations.html',
     };
 
     mockDownload.mockResolvedValueOnce([
@@ -63,7 +63,9 @@ language: es
   it('converts HTML to Markdown with frontmatter', async () => {
     await htmlToMarkdown(mockCloudEvent);
 
-    expect(mockBucket.file).toHaveBeenCalledWith('es/test-post-123.html');
+    expect(mockBucket.file).toHaveBeenCalledWith(
+      'test-post-123_es_translations.html',
+    );
     expect(mockDownload).toHaveBeenCalled();
 
     expect(mockTurndown).toHaveBeenCalledWith(
@@ -79,9 +81,7 @@ language: es
       language: 'es',
     });
 
-    expect(mockBucket.file).toHaveBeenCalledWith(
-      'markdown/es/test-post-123.md',
-    );
+    expect(mockBucket.file).toHaveBeenCalledWith('es/test-post-123.md');
     expect(mockSave).toHaveBeenCalledTimes(1);
 
     const savedMarkdown = mockSave.mock.calls[0][0];

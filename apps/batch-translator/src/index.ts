@@ -1,8 +1,11 @@
 import { TranslationServiceClient } from '@google-cloud/translate';
+import { CloudEvent } from '@google-cloud/functions-framework';
 
 const translationClient = new TranslationServiceClient();
 
-export const main = async (data: { bucket: string; name: string }) => {
+export const main = async (
+  data: CloudEvent<{ bucket: string; name: string }>,
+) => {
   const { bucket, name } = data;
 
   const projectId = process.env.GCP_PROJECT;
