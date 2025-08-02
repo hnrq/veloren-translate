@@ -5,12 +5,12 @@ import { Request, Response } from '@google-cloud/functions-framework';
 const storage = new Storage();
 const parser = new Parser();
 
-const RSS_FEED_URL: string =
+const RSS_FEED_URL =
   process.env.RSS_FEED_URL || 'https://www.nasa.gov/news-release/feed/';
-const RAW_HTML_BUCKET_NAME: string =
+const RAW_HTML_BUCKET_NAME =
   process.env.RAW_HTML_BUCKET_NAME || 'your-raw-html-bucket-name';
 
-const PROCESSED_ITEMS_FILE: string = 'processed_rss_items.json';
+const PROCESSED_ITEMS_FILE = 'processed_rss_items.json';
 
 async function getProcessedItems(): Promise<Set<string>> {
   const file = storage.bucket(RAW_HTML_BUCKET_NAME).file(PROCESSED_ITEMS_FILE);

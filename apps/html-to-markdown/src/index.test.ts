@@ -124,10 +124,7 @@ language: es
       type: 'test',
     };
 
-    await htmlToMarkdown(emptyEvent);
-
-    expect(mockDownload).not.toHaveBeenCalled();
-    expect(mockSave).not.toHaveBeenCalled();
+    await expect(htmlToMarkdown(emptyEvent)).rejects.toThrow(Error);
   });
 
   it('handles errors during Markdown conversion', async () => {
@@ -136,8 +133,7 @@ language: es
       throw new Error(errorMessage);
     });
 
-    await htmlToMarkdown(mockCloudEvent);
-
+    await expect(htmlToMarkdown(mockCloudEvent)).rejects.toThrow(Error);
     expect(mockDownload).toHaveBeenCalled();
     expect(mockTurndown).toHaveBeenCalled();
     expect(mockSave).not.toHaveBeenCalled();
@@ -148,8 +144,7 @@ language: es
     const errorMessage = 'Storage save error';
     mockSave.mockRejectedValueOnce(new Error(errorMessage));
 
-    await htmlToMarkdown(mockCloudEvent);
-
+    await expect(htmlToMarkdown(mockCloudEvent)).rejects.toThrow(Error);
     expect(mockDownload).toHaveBeenCalled();
     expect(mockTurndown).toHaveBeenCalled();
     expect(mockYamlDump).toHaveBeenCalled();

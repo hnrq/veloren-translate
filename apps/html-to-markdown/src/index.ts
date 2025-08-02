@@ -9,31 +9,15 @@ const turndownService = new TurndownService();
 const TRANSLATED_HTML_BUCKET_NAME = process.env.TRANSLATED_HTML_BUCKET_NAME;
 const MARKDOWN_BUCKET_NAME = process.env.MARKDOWN_BUCKET_NAME;
 
-/**
- * Interface for the Cloud Storage event data.
- */
 interface GCSObjectData {
   bucket: string;
   name: string;
-  contentType?: string;
-  metageneration?: string;
-  timeCreated?: string;
-  updated?: string;
 }
 
-/**
- * Converts an HTML file from Cloud Storage to Markdown with frontmatter.
- * This function is triggered by a Cloud Storage object finalization event.
- *
- * @param {CloudEvent<GCSObjectData>} event The Cloud Storage event object that triggered the event.
- */
-export const main = async (event: CloudEvent<GCSObjectData>): Promise<void> => {
-  const file = event.data;
-
-  if (!file) {
-    console.error('No file data found in the event.');
-    return;
-  }
+export const main = async ({
+  data: file,
+}: CloudEvent<GCSObjectData>): Promise<void> => {
+  if (!file) throw new Error('No file data found in the event.');
 
   const { name: filePath, bucket: bucketName } = file;
 
@@ -45,7 +29,7 @@ export const main = async (event: CloudEvent<GCSObjectData>): Promise<void> => {
   }
 
   const fileMatch = filePath.match(
-    /(.*)_([a-z]{2,3}(?:-[a-zA-Z]{2,4})?)_translations\.html$/,
+    /(?:.*\/)?(.*)_([a-z]{2,3}(?:-[a-zA-Z]{2,4})?)_translations\.html$/,
   );
 
   if (!fileMatch) {
@@ -116,6 +100,8 @@ export const main = async (event: CloudEvent<GCSObjectData>): Promise<void> => {
       `Saved Markdown file: ${markdownFilePath} to ${MARKDOWN_BUCKET_NAME}`,
     );
   } catch (error: any) {
-    console.error(`Error converting HTML to Markdown for ${filePath}:`, error);
+    throw new Error(
+      `Error converting HTML to Markdown for ${filePath}: ${error}`,
+    );
   }
 };

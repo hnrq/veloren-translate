@@ -11,6 +11,7 @@ export const main = async (
   const projectId = process.env.GCP_PROJECT;
   const location = 'global';
   const outputBucketName = process.env.TRANSLATED_HTML_BUCKET_NAME;
+  const outputUriPrefix = `gs://${outputBucketName}/${Date.now()}/`;
 
   const request = {
     parent: `projects/${projectId}/locations/${location}`,
@@ -26,7 +27,7 @@ export const main = async (
     ],
     outputConfig: {
       gcsDestination: {
-        outputUriPrefix: `gs://${outputBucketName}/`,
+        outputUriPrefix,
       },
     },
   };

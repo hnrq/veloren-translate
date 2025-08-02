@@ -58,5 +58,11 @@ jobs:
       - name: Deploy HTML to Markdown Converter Cloud Function
         run: pnpm deploy:html-to-markdown
 
+      - name: Update Cloud Functions to route traffic to the latest revision
+        run: |
+          gcloud run services update-traffic digestrssfeed --region=us-central1 --to-latest
+          gcloud run services update-traffic batchtranslator --region=us-central1 --to-latest
+          gcloud run services update-traffic htmltomarkdown --region=us-central1 --to-latest
+
       - name: Display Deployment Success
         run: echo "Cloud Functions deployment workflow completed successfully!"

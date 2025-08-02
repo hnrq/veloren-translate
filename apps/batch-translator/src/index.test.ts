@@ -43,7 +43,9 @@ describe('batchTranslate', () => {
       ],
       outputConfig: {
         gcsDestination: {
-          outputUriPrefix: `gs://test-translated-bucket/`,
+          outputUriPrefix: expect.stringMatching(
+            /^gs:\/\/test-translated-bucket\/\d+\/$/,
+          ),
         },
       },
     });
