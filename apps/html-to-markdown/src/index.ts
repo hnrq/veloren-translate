@@ -1,7 +1,6 @@
 import { Storage } from '@google-cloud/storage';
 import TurndownService from 'turndown';
 import * as yaml from 'js-yaml';
-import { CloudEvent } from '@google-cloud/functions-framework';
 
 const storage = new Storage();
 const turndownService = new TurndownService();
@@ -14,9 +13,7 @@ interface GCSObjectData {
   name: string;
 }
 
-export const main = async (payload: CloudEvent<GCSObjectData>): Promise<void> => {
-  console.log(payload);
-  const file = payload.data;
+export const main = async (file: GCSObjectData): Promise<void> => {
   if (!file) throw new Error('No file data found in the event.');
 
   const { name: filePath, bucket: bucketName } = file;
