@@ -14,9 +14,9 @@ interface GCSObjectData {
   name: string;
 }
 
-export const main = async ({
-  data: file,
-}: CloudEvent<GCSObjectData>): Promise<void> => {
+export const main = async (payload: CloudEvent<GCSObjectData>): Promise<void> => {
+  console.log(payload);
+  const file = payload.data;
   if (!file) throw new Error('No file data found in the event.');
 
   const { name: filePath, bucket: bucketName } = file;
