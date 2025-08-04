@@ -9,7 +9,7 @@ jest.mock('@google-cloud/storage');
 jest.mock('js-yaml', () => ({ dump: jest.fn() }));
 
 describe('htmlToMarkdown', () => {
-  let mockCloudEvent: CloudEvent<any>;
+  let mockCloudEvent: any;
   const mockTurndown = jest.spyOn(TurndownService.prototype, 'turndown');
   const mockYamlDump = jest.spyOn(yaml, 'dump');
   const mockSave = jest.fn();
@@ -23,12 +23,9 @@ describe('htmlToMarkdown', () => {
 
   beforeEach(() => {
     mockCloudEvent = {
-      data: {
-        bucket: process.env.TRANSLATED_HTML_BUCKET_NAME,
-        name: 'test-post-123_es_translations.html',
-        contentType: 'text/html',
-      },
-
+      bucket: process.env.TRANSLATED_HTML_BUCKET_NAME,
+      name: 'test-post-123_es_translations.html',
+      contentType: 'text/html',
       id: 'test-event-id',
       source:
         '//storage.googleapis.com/projects/_/buckets/test-translated-html-bucket',
@@ -61,6 +58,8 @@ language: es
   });
 
   it('converts HTML to Markdown with frontmatter', async () => {
+    const timestamp = new Date('2024-07-30T10:00:00Z');
+    jest.useFakeTimers().setSystemTime(timestamp);
     await htmlToMarkdown(mockCloudEvent);
 
     expect(mockBucket.file).toHaveBeenCalledWith(
@@ -81,7 +80,9 @@ language: es
       language: 'es',
     });
 
-    expect(mockBucket.file).toHaveBeenCalledWith('es/test-post-123.md');
+    expect(mockBucket.file).toHaveBeenCalledWith(
+      `es/${timestamp.getTime()}/test-post-123.md`,
+    );
     expect(mockSave).toHaveBeenCalledTimes(1);
 
     const savedMarkdown = mockSave.mock.calls[0][0];
@@ -94,7 +95,7 @@ language: es
   });
 
   it('ignores files from unexpected buckets', async () => {
-    mockCloudEvent.data.bucket = 'some-other-bucket';
+    mockCloudEvent.bucket = 'some-other-bucket';
 
     await htmlToMarkdown(mockCloudEvent);
 
@@ -105,7 +106,7 @@ language: es
   });
 
   it('skips files without a language prefix', async () => {
-    mockCloudEvent.data.name = 'no-language-prefix.html';
+    mockCloudEvent.name = 'no-language-prefix.html';
 
     await htmlToMarkdown(mockCloudEvent);
 
@@ -116,15 +117,7 @@ language: es
   });
 
   it('handles missing file data in the event', async () => {
-    const emptyEvent: CloudEvent<any> = {
-      data: null,
-      id: '1',
-      source: 'test',
-      specversion: '1.0',
-      type: 'test',
-    };
-
-    await expect(htmlToMarkdown(emptyEvent)).rejects.toThrow(Error);
+    await expect(htmlToMarkdown(null as any)).rejects.toThrow(Error);
   });
 
   it('handles errors during Markdown conversion', async () => {

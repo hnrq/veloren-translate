@@ -48,20 +48,18 @@ export const main = async (file: GCSObjectData): Promise<void> => {
   try {
     const bucket = storage.bucket(bucketName);
     const [fileContentBuffer] = await bucket.file(filePath).download();
-    const htmlString: string = fileContentBuffer.toString('utf8');
+    const htmlString = fileContentBuffer.toString('utf8');
     console.log(`HTML content read from ${filePath}.`);
 
     const titleMatch = htmlString.match(/data-title="([^"]*)"/);
     const pubDateMatch = htmlString.match(/data-pubdate="([^"]*)"/);
     const urlMatch = htmlString.match(/data-url="([^"]*)"/);
 
-    const title: string = titleMatch
+    const title = titleMatch
       ? decodeURIComponent(titleMatch[1])
       : 'Untitled Post';
-    const pubDate: string = pubDateMatch
-      ? pubDateMatch[1]
-      : new Date().toISOString();
-    const url: string = urlMatch ? urlMatch[1] : 'No URL';
+    const pubDate = pubDateMatch ? pubDateMatch[1] : new Date().toISOString();
+    const url = urlMatch?.[1];
 
     console.log(
       `Extracted metadata: Title="${title}", PubDate="${pubDate}", URL="${url}"`,
@@ -86,7 +84,7 @@ export const main = async (file: GCSObjectData): Promise<void> => {
     const finalMarkdown: string = `---\n${yamlFrontmatter}---\n\n${markdownContent}`;
 
     const markdownFileName = `${originalFileName}.md`;
-    const markdownFilePath = `${language}/${markdownFileName}`;
+    const markdownFilePath = `${language}/${Date.now()}/${markdownFileName}`;
     const markdownBucket = storage.bucket(MARKDOWN_BUCKET_NAME);
     const markdownFile = markdownBucket.file(markdownFilePath);
 
