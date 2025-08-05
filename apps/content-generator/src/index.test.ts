@@ -33,7 +33,8 @@ describe('htmlToContent', () => {
       <div style="display:none;"
            data-title="Translated Test Post"
            data-pubdate="2024-07-30T10:00:00Z"
-           data-url="http://example.com/original-post">
+           data-url="http://example.com/original-post"
+           data-cover="http://bucket.example/post1">
       </div>
       <h1>Hello World</h1><p>This is a test paragraph.</p>
     `),
@@ -64,6 +65,7 @@ describe('htmlToContent', () => {
       'http://example.com/original-post',
     );
     expect(savedJson).toHaveProperty('content');
+    expect(savedJson).toHaveProperty('cover', 'http://bucket.example/post1');
     expect(savedJson.content).toContain('<h1>Hello World</h1>');
     expect(savedJson).toHaveProperty('slug', 'translated-test-post');
     expect(mockSave.mock.calls[0][1]).toEqual({

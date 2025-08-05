@@ -40,12 +40,18 @@ describe('digestRssFeed', () => {
         link: 'http://example.com/post1',
         pubDate: 'Mon, 01 Jan 2024 00:00:00 GMT',
         content: '<p>Content of post 1</p>',
+        enclosure: {
+          url: 'http://bucket.example/post1',
+        },
       },
       {
         title: 'Test Post 2',
         link: 'http://example.com/post2',
         pubDate: 'Tue, 02 Jan 2024 00:00:00 GMT',
         content: '<p>Content of post 2</p>',
+        enclosure: {
+          url: 'http://bucket.example/post2',
+        },
       },
     ];
 
@@ -62,12 +68,14 @@ describe('digestRssFeed', () => {
     expect(htmlContent1).toContain('data-title="Test Post 1"');
     expect(htmlContent1).toContain('data-url="http://example.com/post1"');
     expect(htmlContent1).toContain('<p>Content of post 1</p>');
+    expect(htmlContent1).toContain('data-cover="http://bucket.example/post1');
     expect(mockSave.mock.calls[0][1]).toEqual({ contentType: 'text/html' });
 
     const htmlContent2 = mockSave.mock.calls[1][0];
     expect(htmlContent2).toContain('data-title="Test Post 2"');
     expect(htmlContent2).toContain('data-url="http://example.com/post2"');
     expect(htmlContent2).toContain('<p>Content of post 2</p>');
+    expect(htmlContent2).toContain('data-cover="http://bucket.example/post2');
     expect(mockSave.mock.calls[1][1]).toEqual({ contentType: 'text/html' });
 
     const processedItemsJson = mockSave.mock.calls[2][0];

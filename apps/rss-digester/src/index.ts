@@ -85,6 +85,7 @@ export const main = async (req: Request, res: Response): Promise<void> => {
       const pubDate: string = item.pubDate || new Date().toISOString();
       const url: string = item.link || 'No URL';
       const content: string = item.content || item.contentEncoded || '';
+      const cover: string = item.enclosure?.url;
 
       const fileName: string = `${encodeURIComponent(
         title.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50),
@@ -95,7 +96,8 @@ export const main = async (req: Request, res: Response): Promise<void> => {
         <div style="display:none;"
              data-title="${title}"
              data-pubdate="${pubDate}"
-             data-url="${url}">
+             data-url="${url}"
+             data-cover="${cover}">
         </div>
         ${content}
       `;

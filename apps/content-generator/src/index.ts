@@ -53,12 +53,14 @@ export const main = async (file: GCSObjectData) => {
     const titleMatch = htmlString.match(/data-title="([^"]*)"/);
     const pubDateMatch = htmlString.match(/data-pubdate="([^"]*)"/);
     const urlMatch = htmlString.match(/data-url="([^"]*)"/);
+    const coverMatch = htmlString.match(/data-cover="([^"]*)"/);
 
     const title = titleMatch
       ? decodeURIComponent(titleMatch[1])
       : 'Untitled Post';
     const pubDate = pubDateMatch ? pubDateMatch[1] : new Date().toISOString();
     const url = urlMatch?.[1];
+    const cover = coverMatch?.[1];
 
     console.log(
       `Extracted metadata: Title="${title}", PubDate="${pubDate}", URL="${url}"`,
@@ -78,11 +80,12 @@ export const main = async (file: GCSObjectData) => {
 
     await jsonFile.save(
       JSON.stringify({
-        title: title,
+        title,
         date: pubDate,
         source_url: url,
         language: language,
         content: cleanHtmlString,
+        cover,
         slug: slugify(title, { lower: true }),
       }),
       {
