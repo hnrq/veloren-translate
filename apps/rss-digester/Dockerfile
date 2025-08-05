@@ -4,7 +4,7 @@ RUN npm install -g pnpm
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY tsconfig.base.json nx.json ./
-COPY apps/html-to-markdown/package.json ./apps/html-to-markdown/
+COPY apps/content-generator/package.json ./apps/content-generator/
 COPY apps/rss-digester/package.json ./apps/rss-digester/
 RUN pnpm install --frozen-lockfile
 COPY . .

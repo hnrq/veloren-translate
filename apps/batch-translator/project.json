@@ -9,7 +9,7 @@
       "options": {
         "outputPath": "apps/batch-translator/dist",
         "tsConfig": "apps/batch-translator/tsconfig.json",
-        "main": "apps/batch-translator/src/index.js",
+        "main": "apps/batch-translator/src/index.ts",
         "assets": ["apps/batch-translator/src/assets"]
       },
       "configurations": {

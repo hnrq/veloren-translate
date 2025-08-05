@@ -1,0 +1,11 @@
+{
+  "name": "@veloren-translate/content-generator",
+  "description": "Google Cloud Function to digest HTML and save it to GCS.",
+  "type": "module",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^4.0.0",
+    "@google-cloud/storage": "^7.16.0",
+    "slugify": "^1.6.6"
+  },
+  "license": "MIT"
+}

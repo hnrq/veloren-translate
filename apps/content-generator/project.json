@@ -1,16 +1,16 @@
 {
-  "name": "@veloren-translate/html-to-markdown",
-  "sourceRoot": "apps/html-to-markdown/src",
+  "name": "@veloren-translate/content-generator",
+  "sourceRoot": "apps/content-generator/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "apps/html-to-markdown/dist",
-        "tsConfig": "apps/html-to-markdown/tsconfig.json",
-        "main": "apps/html-to-markdown/src/index.js",
-        "assets": ["apps/html-to-markdown/src/assets"]
+        "outputPath": "apps/content-generator/dist",
+        "tsConfig": "apps/content-generator/tsconfig.json",
+        "main": "apps/content-generator/src/index.ts",
+        "assets": ["apps/content-generator/src/assets"]
       },
       "configurations": {
         "production": {
@@ -24,11 +24,11 @@
     "serve": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "html-to-markdown:build"
+        "buildTarget": "content-generator:build"
       },
       "configurations": {
         "production": {
-          "buildTarget": "html-to-markdown:build:production"
+          "buildTarget": "content-generator:build:production"
         }
       }
     },

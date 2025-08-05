@@ -1,19 +1,18 @@
+import { HttpFunction } from '@google-cloud/functions-framework';
 import { Storage } from '@google-cloud/storage';
-import TurndownService from 'turndown';
-import * as yaml from 'js-yaml';
+import slugify from 'slugify';
 
 const storage = new Storage();
-const turndownService = new TurndownService();
 
 const TRANSLATED_HTML_BUCKET_NAME = process.env.TRANSLATED_HTML_BUCKET_NAME;
-const MARKDOWN_BUCKET_NAME = process.env.MARKDOWN_BUCKET_NAME;
+const CONTENT_BUCKET_NAME = process.env.CONTENT_BUCKET_NAME;
 
 interface GCSObjectData {
   bucket: string;
   name: string;
 }
 
-export const main = async (file: GCSObjectData): Promise<void> => {
+export const main = async (file: GCSObjectData) => {
   if (!file) throw new Error('No file data found in the event.');
 
   const { name: filePath, bucket: bucketName } = file;
@@ -70,33 +69,28 @@ export const main = async (file: GCSObjectData): Promise<void> => {
       '',
     );
 
-    const markdownContent: string = turndownService.turndown(cleanHtmlString);
-    console.log('HTML converted to Markdown.');
+    console.log('HTML converted to JSON.');
 
-    const frontmatter = {
-      title: title,
-      date: pubDate,
-      source_url: url,
-      language: language,
-    };
-    const yamlFrontmatter: string = yaml.dump(frontmatter);
+    const jsonFileName = `${originalFileName}.json`;
+    const jsonFilePath = `${language}/${Date.now()}/${jsonFileName}`;
+    const jsonBucket = storage.bucket(CONTENT_BUCKET_NAME);
+    const jsonFile = jsonBucket.file(jsonFilePath);
 
-    const finalMarkdown: string = `---\n${yamlFrontmatter}---\n\n${markdownContent}`;
-
-    const markdownFileName = `${originalFileName}.md`;
-    const markdownFilePath = `${language}/${Date.now()}/${markdownFileName}`;
-    const markdownBucket = storage.bucket(MARKDOWN_BUCKET_NAME);
-    const markdownFile = markdownBucket.file(markdownFilePath);
-
-    await markdownFile.save(finalMarkdown, {
-      contentType: 'text/markdown',
-    });
-    console.log(
-      `Saved Markdown file: ${markdownFilePath} to ${MARKDOWN_BUCKET_NAME}`,
+    await jsonFile.save(
+      JSON.stringify({
+        title: title,
+        date: pubDate,
+        source_url: url,
+        language: language,
+        content: cleanHtmlString,
+        slug: slugify(title, { lower: true }),
+      }),
+      {
+        contentType: 'application/json',
+      },
     );
+    console.log(`Saved JSON file: ${jsonFilePath} to ${CONTENT_BUCKET_NAME}`);
   } catch (error: any) {
-    throw new Error(
-      `Error converting HTML to Markdown for ${filePath}: ${error}`,
-    );
+    throw new Error(`Error converting HTML to JSON for ${filePath}: ${error}`);
   }
 };
