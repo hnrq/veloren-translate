@@ -1,11 +1,7 @@
-import { HttpFunction } from '@google-cloud/functions-framework';
 import { Storage } from '@google-cloud/storage';
 import slugify from 'slugify';
 
 const storage = new Storage();
-
-const TRANSLATED_HTML_BUCKET_NAME = process.env.TRANSLATED_HTML_BUCKET_NAME;
-const CONTENT_BUCKET_NAME = process.env.CONTENT_BUCKET_NAME;
 
 interface GCSObjectData {
   bucket: string;
@@ -19,7 +15,7 @@ export const main = async (file: GCSObjectData) => {
 
   console.log(`Processing file: ${filePath} from bucket: ${bucketName}`);
 
-  if (bucketName !== TRANSLATED_HTML_BUCKET_NAME) {
+  if (bucketName !== process.env.TRANSLATED_HTML_BUCKET_NAME) {
     console.log(`Ignoring file from unexpected bucket: ${bucketName}`);
     return;
   }
@@ -75,7 +71,7 @@ export const main = async (file: GCSObjectData) => {
 
     const jsonFileName = `${originalFileName}.json`;
     const jsonFilePath = `${language}/${Date.now()}/${jsonFileName}`;
-    const jsonBucket = storage.bucket(CONTENT_BUCKET_NAME);
+    const jsonBucket = storage.bucket(process.env.CONTENT_BUCKET_NAME);
     const jsonFile = jsonBucket.file(jsonFilePath);
 
     await jsonFile.save(
@@ -92,7 +88,14 @@ export const main = async (file: GCSObjectData) => {
         contentType: 'application/json',
       },
     );
-    console.log(`Saved JSON file: ${jsonFilePath} to ${CONTENT_BUCKET_NAME}`);
+    console.log(
+      `Saved JSON file: ${jsonFilePath} to ${process.env.CONTENT_BUCKET_NAME}`,
+    );
+
+    if (process.env.BUILD_HOOK) {
+      console.log('Triggering website deploy');
+      await fetch(process.env.BUILD_HOOK, { method: 'POST' });
+    }
   } catch (error: any) {
     throw new Error(`Error converting HTML to JSON for ${filePath}: ${error}`);
   }

@@ -1,7 +1,9 @@
 import { main as htmlToContent } from './index';
 import { Bucket, Storage } from '@google-cloud/storage';
+import jestFetchMock from 'jest-fetch-mock';
 
 jest.mock('@google-cloud/storage');
+jestFetchMock.enableMocks();
 
 describe('htmlToContent', () => {
   let mockCloudEvent: any;
@@ -102,5 +104,15 @@ describe('htmlToContent', () => {
     await expect(htmlToContent(mockCloudEvent)).rejects.toThrow(Error);
     expect(mockDownload).toHaveBeenCalled();
     expect(mockSave).toHaveBeenCalledTimes(1);
+  });
+
+  it('triggers website deploy if process.env.BUILD_HOOK is defined', async () => {
+    process.env.BUILD_HOOK = 'https://build.hook/example';
+    const fetchSpy = jest.spyOn(global, 'fetch');
+
+    await htmlToContent(mockCloudEvent);
+    expect(fetchSpy).toHaveBeenCalledWith(process.env.BUILD_HOOK, {
+      method: 'POST',
+    });
   });
 });
